@@ -40,7 +40,7 @@ INSERT INTO Shipments (PartnerID, DestinationCity, PromisedDate, ActualDeliveryD
 (3, 'Phoenix', CURRENT_DATE - INTERVAL 16 DAY, CURRENT_DATE - INTERVAL 13 DAY),
 (3, 'New York', CURRENT_DATE - INTERVAL 14 DAY, CURRENT_DATE - INTERVAL 12 DAY),
 (4, 'Seattle', CURRENT_DATE - INTERVAL 12 DAY, CURRENT_DATE - INTERVAL 10 DAY),
-(4, 'Miami', CURRENT_DATE - INTERVAL 10 DAY, CURRENT_DATE - INTERVAL 10 DAY),
+(4, 'Miami', CURRENT_DATE - INTERVAL 10 DAY, NULL),
 (1, 'New York', CURRENT_DATE - INTERVAL 8 DAY, CURRENT_DATE - INTERVAL 5 DAY),
 (2, 'Dallas', CURRENT_DATE - INTERVAL 6 DAY, CURRENT_DATE - INTERVAL 4 DAY),
 (3, 'Los Angeles', CURRENT_DATE - INTERVAL 4 DAY, NULL),
@@ -77,8 +77,8 @@ ORDER BY s.ShipmentID;
 SELECT
     p.PartnerName,
     COUNT(dl.LogID) AS TotalDeliveries,
-    COALESCE(SUM(CASE WHEN dl.Status = 'Successful' THEN 1 ELSE 0 END), 0) AS SuccessfulCount,
-    COALESCE(SUM(CASE WHEN dl.Status = 'Returned' THEN 1 ELSE 0 END), 0) AS ReturnedCount
+    SUM(dl.Status = 'Successful') AS SuccessfulCount,
+    SUM(dl.Status = 'Returned') AS ReturnedCount
 FROM Partners p
 LEFT JOIN Shipments s ON p.PartnerID = s.PartnerID
 LEFT JOIN DeliveryLogs dl ON s.ShipmentID = dl.ShipmentID
